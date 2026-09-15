@@ -4,7 +4,7 @@ import {
   Eye, EyeOff, Plus, Trash2, CheckCircle2, AlertCircle, 
   Share2, QrCode, Smartphone, X, Check, ShieldCheck, 
   Sparkles, ExternalLink, ChevronDown, Clock, ArrowRight,
-  FileText, SlidersHorizontal
+  FileText, SlidersHorizontal, Github
 } from 'lucide-react';
 import { ChatWorkRoom, MessageTemplate } from '../types';
 import { 
@@ -14,7 +14,7 @@ import {
   optimizeMobilePhoto, formatBytes, MAX_CHATWORK_FILE_SIZE, CompressionResult 
 } from '../utils/imageCompressor';
 import { TemplateManagerModal } from './TemplateManagerModal';
-import { AiScreenshotReplyModal } from './AiScreenshotReplyModal';
+import { GitHubExportModal } from './GitHubExportModal';
 import { 
   loadSavedTemplates, 
   saveTemplatesToStorage, 
@@ -52,7 +52,6 @@ export function MobileWebApp({ onBackToDesktop }: MobileWebAppProps) {
     return initTpls[0]?.body || '';
   });
   const [showTemplateModal, setShowTemplateModal] = useState<boolean>(false);
-  const [showAiModal, setShowAiModal] = useState<boolean>(false);
 
   // Photo Attachment State (Direct Camera & Library)
   const [attachedPhoto, setAttachedPhoto] = useState<CompressionResult | null>(null);
@@ -68,6 +67,7 @@ export function MobileWebApp({ onBackToDesktop }: MobileWebAppProps) {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [showIosPwaGuide, setShowIosPwaGuide] = useState<boolean>(false);
   const [showQrModal, setShowQrModal] = useState<boolean>(false);
+  const [showGitHubModal, setShowGitHubModal] = useState<boolean>(false);
 
   // 1. 初期ロード：保存された設定とルーム一覧
   useEffect(() => {
@@ -358,37 +358,6 @@ export function MobileWebApp({ onBackToDesktop }: MobileWebAppProps) {
           </button>
         </div>
 
-        {/* AI Screenshot Reply Assistant Banner */}
-        <div className="bg-gradient-to-r from-red-600 via-rose-600 to-red-700 rounded-2xl p-3 text-white shadow-md shadow-red-500/20">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs font-bold leading-tight flex items-center gap-1.5">
-                  <span>AIスクショ返信アシスタント</span>
-                  <span className="text-[9px] bg-white/20 px-1.5 py-0.2 rounded-full font-normal">
-                    海外発送 ✕ EC顧客
-                  </span>
-                </div>
-                <div className="text-[10px] text-white/80 truncate mt-0.5">
-                  ChatWorkの問い合わせスクショからプロの返信文を生成
-                </div>
-              </div>
-            </div>
-            <button
-              type="button"
-              id="open-ai-screenshot-modal-btn"
-              onClick={() => setShowAiModal(true)}
-              className="shrink-0 px-3 py-1.5 bg-white hover:bg-rose-50 text-red-600 text-xs font-bold rounded-xl shadow-xs transition active:scale-95 flex items-center gap-1"
-            >
-              <span>作成</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-
         {/* Quick Message Template Chips with Registration Button */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between px-1">
@@ -440,16 +409,8 @@ export function MobileWebApp({ onBackToDesktop }: MobileWebAppProps) {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => setShowAiModal(true)}
-                className="text-[11px] font-bold text-red-600 hover:text-red-700 flex items-center gap-0.5 bg-red-50 hover:bg-red-100 px-2 py-0.5 rounded-md transition"
-              >
-                <Sparkles className="w-3 h-3" />
-                <span>AI返信作成</span>
-              </button>
-              <button
-                type="button"
                 onClick={() => setMessage('')}
-                className="text-[11px] text-rose-500 hover:text-rose-700"
+                className="text-[11px] text-rose-500 hover:text-rose-700 font-medium"
               >
                 クリア
               </button>
@@ -830,13 +791,25 @@ export function MobileWebApp({ onBackToDesktop }: MobileWebAppProps) {
                 </p>
               </div>
 
-              <div className="pt-2">
+              <div className="pt-2 space-y-2">
                 <button
                   type="button"
                   onClick={() => handleSaveSettings(apiToken, isDemoMode)}
-                  className="w-full py-3 bg-[#eb5a46] hover:bg-[#d64936] text-white font-bold rounded-xl text-xs shadow-md shadow-[#eb5a46]/20 transition"
+                  className="w-full py-3 bg-[#eb5a46] hover:bg-[#d64936] text-white font-bold rounded-xl text-xs shadow-md shadow-[#eb5a46]/20 transition active:scale-[0.99]"
                 >
                   設定を保存して更新
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowSettingsDrawer(false);
+                    setShowGitHubModal(true);
+                  }}
+                  className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition active:scale-[0.99]"
+                >
+                  <Github className="w-4 h-4 text-white" />
+                  <span>GitHub公開・コードDL手順</span>
                 </button>
               </div>
             </div>
@@ -982,15 +955,10 @@ export function MobileWebApp({ onBackToDesktop }: MobileWebAppProps) {
         }}
       />
 
-      {/* 11. Modal: AI Screenshot to Reply Generator (Overseas Fulfillment) */}
-      <AiScreenshotReplyModal
-        isOpen={showAiModal}
-        onClose={() => setShowAiModal(false)}
-        onApplyReply={(replyText) => {
-          setMessage(replyText);
-          showToast('AI返信文を入力欄にセットしました。内容を確認して未読送信してください。', 'success');
-        }}
-        onSaveAsTemplate={handleSaveAsTemplate}
+      {/* 11. Modal: GitHub Export & Instructions */}
+      <GitHubExportModal
+        isOpen={showGitHubModal}
+        onClose={() => setShowGitHubModal(false)}
       />
 
     </div>

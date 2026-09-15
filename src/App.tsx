@@ -7,13 +7,14 @@ import React, { useState, useEffect } from 'react';
 import { 
   Download, FileCode, PlayCircle, BookOpen, Layers, 
   ShieldCheck, CheckCircle2, MessageSquare, ExternalLink,
-  Smartphone, QrCode, Camera, X
+  Smartphone, QrCode, Camera, X, Github
 } from 'lucide-react';
 import { Simulator } from './components/Simulator';
 import { CodeViewer } from './components/CodeViewer';
 import { InstallGuide } from './components/InstallGuide';
 import { ApiExplainer } from './components/ApiExplainer';
 import { MobileWebApp } from './components/MobileWebApp';
+import { GitHubExportModal } from './components/GitHubExportModal';
 import { downloadExtensionZip } from './extensionFiles';
 
 type ActiveTab = 'mobile' | 'simulator' | 'code' | 'install' | 'spec';
@@ -30,6 +31,7 @@ export default function App() {
 
   const [isDownloadingZip, setIsDownloadingZip] = useState<boolean>(false);
   const [showDesktopQrModal, setShowDesktopQrModal] = useState<boolean>(false);
+  const [showGitHubModal, setShowGitHubModal] = useState<boolean>(false);
 
   const handleDownloadZip = async () => {
     setIsDownloadingZip(true);
@@ -67,6 +69,18 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* GitHub Export / Download Guide Button */}
+            <button
+              id="top-github-guide-btn"
+              onClick={() => setShowGitHubModal(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs shadow-xs transition active:scale-95"
+              title="GitHub公開・サイト版コードダウンロード手順"
+            >
+              <Github className="w-4 h-4 text-white" />
+              <span className="hidden sm:inline">GitHub公開手順</span>
+              <span className="sm:hidden">GitHub</span>
+            </button>
+
             {/* Open on Phone QR Button */}
             <button
               id="top-open-phone-qr-btn"
@@ -326,6 +340,12 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* GitHub Export & Instructions Modal */}
+      <GitHubExportModal 
+        isOpen={showGitHubModal}
+        onClose={() => setShowGitHubModal(false)}
+      />
     </div>
   );
 }

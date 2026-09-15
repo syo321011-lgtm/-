@@ -3,10 +3,10 @@ import {
   Send, RefreshCw, Search, Settings, Eye, EyeOff, Plus, 
   Trash2, Edit3, CheckCircle2, AlertCircle, Check, Info, 
   Terminal, ShieldCheck, X, Image as ImageIcon, UploadCloud,
-  Sparkles, ArrowRight
+  Sparkles, ArrowRight, Github
 } from 'lucide-react';
 import { ChatWorkRoom, MessageTemplate, ApiLogEntry } from '../types';
-import { AiScreenshotReplyModal } from './AiScreenshotReplyModal';
+import { GitHubExportModal } from './GitHubExportModal';
 import { 
   loadSavedTemplates, 
   saveTemplatesToStorage 
@@ -90,7 +90,7 @@ export const Simulator: React.FC = () => {
   const [editingTplId, setEditingTplId] = useState<string | null>(null);
   const [tplFormTitle, setTplFormTitle] = useState<string>('');
   const [tplFormBody, setTplFormBody] = useState<string>('');
-  const [isAiModalOpen, setIsAiModalOpen] = useState<boolean>(false);
+  const [showGitHubModal, setShowGitHubModal] = useState<boolean>(false);
 
   // Message
   const [message, setMessage] = useState<string>(() => {
@@ -315,19 +315,6 @@ export const Simulator: React.FC = () => {
     showNotification('テンプレートを削除しました', 'success');
   };
 
-  // AIからのテンプレート保存
-  const handleSaveAsTemplateFromAi = (title: string, body: string) => {
-    const newTpl: MessageTemplate = {
-      id: 'tpl-' + Date.now(),
-      title: title.trim(),
-      body: body.trim()
-    };
-    const updated = [newTpl, ...templates];
-    setTemplates(updated);
-    saveTemplatesToStorage(updated);
-    showNotification(`定型文「${title}」を登録しました`, 'success');
-  };
-
   // Send message
   const handleSendMessage = async () => {
     if (!apiToken) {
@@ -532,6 +519,13 @@ export const Simulator: React.FC = () => {
 
               <div className="flex items-center gap-1">
                 <button
+                  onClick={() => setShowGitHubModal(true)}
+                  className="p-1.5 rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors"
+                  title="GitHub公開・コードDL手順"
+                >
+                  <Github className="w-4 h-4" />
+                </button>
+                <button
                   id="sim-settings-btn"
                   onClick={() => setIsSettingsOpen(!isSettingsOpen)}
                   className={`p-1.5 rounded-md transition-colors ${
@@ -695,32 +689,6 @@ export const Simulator: React.FC = () => {
                 </div>
               </section>
 
-              {/* AI Screenshot to Reply Feature Card */}
-              <section className="bg-gradient-to-r from-red-600 via-rose-600 to-red-700 rounded-lg p-3 text-white shadow-sm">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-                      <Sparkles className="w-4 h-4 text-white" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold leading-tight flex items-center gap-1.5">
-                        <span>AIスクショ返信アシスタント</span>
-                        <span className="text-[9px] bg-white/20 px-1.5 py-0.2 rounded font-normal">海外発送EC特化</span>
-                      </div>
-                      <div className="text-[10.5px] text-white/80">ChatWorkの問い合わせスクショからプロの返信文を自動生成</div>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setIsAiModalOpen(true)}
-                    className="shrink-0 px-2.5 py-1.5 bg-white hover:bg-rose-50 text-red-600 text-xs font-bold rounded shadow-xs transition active:scale-95 flex items-center gap-1"
-                  >
-                    <span>作成</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </section>
-
               {/* Step 2: Template Selector */}
               <section id="sim-template-card" className="bg-white border border-slate-200 rounded-lg p-3 shadow-xs">
                 <div className="flex items-center justify-between mb-2">
@@ -841,14 +809,6 @@ export const Simulator: React.FC = () => {
                     <h4 className="font-bold text-slate-900 text-xs">メッセージ編集 & 送信</h4>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setIsAiModalOpen(true)}
-                      className="text-[11px] font-bold text-red-600 hover:text-red-700 flex items-center gap-0.5 bg-red-50 hover:bg-red-100 px-2 py-0.5 rounded transition"
-                    >
-                      <Sparkles className="w-3 h-3" />
-                      <span>AI返信作成</span>
-                    </button>
                     <button
                       onClick={() => {
                         setMessage('');
@@ -1133,16 +1093,12 @@ export const Simulator: React.FC = () => {
         </div>
       </div>
 
-      {/* AI Screenshot Reply Modal */}
-      <AiScreenshotReplyModal
-        isOpen={isAiModalOpen}
-        onClose={() => setIsAiModalOpen(false)}
-        onApplyReply={(replyText) => {
-          setMessage(replyText);
-          showNotification('AI返信文を入力欄に反映しました', 'success');
-        }}
-        onSaveAsTemplate={handleSaveAsTemplateFromAi}
+      {/* GitHub Export Modal */}
+      <GitHubExportModal
+        isOpen={showGitHubModal}
+        onClose={() => setShowGitHubModal(false)}
       />
+
     </div>
   );
 };
