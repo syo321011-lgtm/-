@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "ChatWork 未読キープ送信",
+  "short_name": "未読キープ",
+  "description": "ChatWorkで未読状態を維持したまま写真やメッセージを送信できるスマホWebアプリ",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#eb5a46",
+  "icons": [
+    {
+      "src": "/extension/icons/icon128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/extension/icons/icon48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

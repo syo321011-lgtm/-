@@ -1,0 +1,10 @@
+{
+  "name": "ChatWork 未読キープ送信 Extension",
+  "description": "ChatWorkで未読状態を維持したままメッセージやiPhoneカメラ写真を送信できるChrome拡張機能＆スマホWebアプリ",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

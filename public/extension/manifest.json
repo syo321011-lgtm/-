@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "ChatWork 未読キープ送信",
+  "version": "1.0.0",
+  "description": "ChatWork画面を開かずにAPI経由で未読状態を維持したまま、テンプレートメッセージを特定のチャットルームへ送信する拡張機能",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ChatWork 未読キープ送信",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://api.chatwork.com/*"
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
